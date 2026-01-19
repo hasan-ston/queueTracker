@@ -6,3 +6,11 @@
 - ABC: It is a blueprint that forces subclasses to implement specific methods. It defines what methods must exist, not how they work. They dont have any implementation code, just pass.
 - Methods like get_task(task_id) take just the ID because you're looking for the task
 - Methods like requeue(task) take the whole object as we already have it.
+- Using 'with' abstracts away most of the resource handling logic. It allows using context managers to pack the code that handles setup and teardown logic.
+
+- Queue Class: 
+1) purpose is to add tasks to the queue (user side)
+2) enqueue() converts user input into Task objects
+3) Converts string priorities to ints
+4) Methods don't handle the logic, that is assigned to the backend
+5) this is separate from the storage implementation, modular design
