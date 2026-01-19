@@ -3,3 +3,6 @@
 - To enqeue a job, we call the queue object, and call the enqeue method, and point it to the function to be exectued.
 - Each job is defined by a unique id
 - Task are serialized to JSON strings and stored in Redis. Then when a worker pulls a job, it deserializes the JSON string back into a python object. Reason why is because Redis stores everything as strings.
+- ABC: It is a blueprint that forces subclasses to implement specific methods. It defines what methods must exist, not how they work. They dont have any implementation code, just pass.
+- Methods like get_task(task_id) take just the ID because you're looking for the task
+- Methods like requeue(task) take the whole object as we already have it.
