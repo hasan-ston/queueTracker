@@ -14,3 +14,13 @@
 3) Converts string priorities to ints
 4) Methods don't handle the logic, that is assigned to the backend
 5) this is separate from the storage implementation, modular design
+
+- Instantiating a logger: can be done by callling logging.getLogger()
+
+- Worker Class:
+1) Three main parts: registration, processing, and execution of tasks
+2) Registration: @worker.task() decorator or `worker.register(name, handler)` method
+3) _process_task(): executes handler, implements retry logic, marks completed or failed
+4) _worker_loop(): polls for tasks using `_scheduler.get_next_task()`.
+5) `run()`: lifecycle management, supports single/multi-threaded via ThreadPoolExecutor, and has implemented graceful shutdown
+6) Error handling prevents worker crashes.
