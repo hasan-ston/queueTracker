@@ -16,7 +16,7 @@ class storage_backend(ABC):
         pass
 
     @abstractmethod
-    def pop(self, priority=Optional[int] = None ):
+    def pop(self, priority=None):
         """Pop a task from the queue.
 
         Returns:
@@ -25,7 +25,7 @@ class storage_backend(ABC):
         pass
 
     @abstractmethod
-    def peek(self, priority=Optional[int] = None):
+    def peek(self, priority: Optional[int] = None):
         """Peek at the next task in the queue without removing it.
 
         Returns:
@@ -100,7 +100,7 @@ class storage_backend(ABC):
         pass
 
     @abstractmethod
-    def get_queue_length(self, priority=Optional[int] = None):
+    def get_queue_length(self, priority=None):
         """Get the number of tasks in the queue.
 
         Returns:

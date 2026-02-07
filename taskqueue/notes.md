@@ -24,3 +24,11 @@
 4) _worker_loop(): polls for tasks using `_scheduler.get_next_task()`.
 5) `run()`: lifecycle management, supports single/multi-threaded via ThreadPoolExecutor, and has implemented graceful shutdown
 6) Error handling prevents worker crashes.
+
+- RedisBackend:
+1) Stores tasks as serialized JSON strings in Redis
+2) Uses Redis lists for priority queues
+3) FIFO 
+4) Pop() iterates through priority levels in descending order to get highest priority task first
+5) get_task() retrieves the stored task meta data and deserializes to Task object
+6) get_processing_count() uses Redis set (SMEMBERS) to track currently processing tasks

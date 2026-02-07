@@ -1,4 +1,5 @@
 from taskqueue.task import Task, Priority
+from taskqueue.storage.redis_backend import RedisBackend
 from typing import Union, Optional
 
 class Queue:
@@ -7,7 +8,7 @@ class Queue:
         if backend is not None:
                 self._backend = backend
         else:
-            self._backend = () # TODO: implement redis backend
+            self._backend = RedisBackend(host = redis_host, port = redis_port, db = redis_db, password = redis_password)
                     
 
     def enqueue(self, task_name, *args, priority: Union[str,int] = "medium", max_retries: int = 3, **kwargs):

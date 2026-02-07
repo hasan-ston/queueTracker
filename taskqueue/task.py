@@ -1,5 +1,20 @@
 from datetime import datetime, timezone
 import json
+import uuid
+
+class TaskStatus:
+    """ Current status of task, whether it's pending, enqueued, completed, or failed. """
+    PENDING = 'pending'
+    ENQUEUED = 'enqueued'
+    COMPLETED = 'completed'
+    FAILED = 'failed'
+
+
+class Priority:
+    """ level 1 to 3 """
+    High = 1
+    Medium = 2
+    Low = 3
 
 class Task:
     """
@@ -14,8 +29,8 @@ class Task:
     - retry_count: number of times task has been retried
     - max_retries: maximum number of retries allowed for the task
     """
-    def __init__(self, id, name, args = None, kwargs = None, priority=Priority.High, status = TaskStatus.PENDING, created_at = None, retry_count=0, max_retries=3):
-        self.id = id
+    def __init__(self, name, id=None, args = None, kwargs = None, priority=Priority.High, status = TaskStatus.PENDING, created_at = None, retry_count=0, max_retries=3):
+        self.id = id or str(uuid.uuid4())
         self.name = name
         self.args = args or () # 'or' returns the first truthy value
         self.kwargs = kwargs if kwargs is not None else {}
@@ -33,11 +48,12 @@ class Task:
             'kwargs': self.kwargs,
             'priority': self.priority,
             'status': self.status,
-            'created_at': self.created_at
+            'created_at': self.created_at.isoformat()
         }
         return json.dumps(data)  # converts python object to json string
     
     """ deserializing from json string to python object """
+    @staticmethod
     def from_json(json_str):
         data = json.loads(json_str)
         data['created_at'] = datetime.fromisoformat(data['created_at'])
@@ -47,17 +63,3 @@ class Task:
     @property
     def can_retry(self):
         return self.retry_count < self.max_retries
-
-class TaskStatus:
-    """ Current status of task, whether it's pending, enqueued, completed, or failed. """
-    PENDING = 'pending'
-    ENQUEUED = 'enqueued'
-    COMPLETED = 'completed'
-    FAILED = 'failed'
-
-
-class Priority:
-    """ level 1 to 3 """
-    High = 1
-    Medium = 2
-    Low = 3

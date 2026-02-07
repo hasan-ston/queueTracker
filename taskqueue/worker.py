@@ -105,4 +105,12 @@ class Worker:
             self._shutdown()
 
     def _shutdown(self):
-        #TODO
+        logger.info("Shutting worker down")
+        self._running = False
+
+        if self._executor:
+            self._executor.shutdown(wait=True)
+            self._executor = None
+
+        self._backend.close()
+        logger.info("Worker shutdown complete")
