@@ -12,17 +12,6 @@ class Queue:
                     
 
     def enqueue(self, task_name, *args, priority: Union[str,int] = "medium", max_retries: int = 3, **kwargs):
-        """
-        Enqueue a new task into the queue.
-        Accepts both strings and integers for priority.
-        
-        args:
-        - task_name: Name of the task to be performed.
-        - args: Positional arguments for the task.
-        - kwargs: Keyword arguments for the task.
-        - priority: Priority level of the task (1-3).
-        - max_retries: Maximum number of retries allowed for the task.
-        """
 
         if isinstance(priority, str): # checks if priority is of type string
             priority_lower = priority.lower()

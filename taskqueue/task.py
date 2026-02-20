@@ -3,11 +3,11 @@ import json
 import uuid
 
 class TaskStatus:
-    """ Current status of task, whether it's pending, enqueued, completed, or failed. """
     PENDING = 'pending'
     ENQUEUED = 'enqueued'
     COMPLETED = 'completed'
     FAILED = 'failed'
+    PROCESSING = 'processing'
 
 
 class Priority:
@@ -17,18 +17,7 @@ class Priority:
     Low = 3
 
 class Task:
-    """
-    This represents a task in the task queue system.
-    Attributes include:
-    - id: a unique identifier for the task
-    - name: name of task to be performed
-    - args, kwargs: positional and keyword arguments for the task
-    - priority: 1 (highest) to 3(lowest)
-    - status of task currently
-    - created_at: timestamp when task was created
-    - retry_count: number of times task has been retried
-    - max_retries: maximum number of retries allowed for the task
-    """
+
     def __init__(self, name, id=None, args = None, kwargs = None, priority=Priority.High, status = TaskStatus.PENDING, created_at = None, retry_count=0, max_retries=3):
         self.id = id or str(uuid.uuid4())
         self.name = name
@@ -48,18 +37,26 @@ class Task:
             'kwargs': self.kwargs,
             'priority': self.priority,
             'status': self.status,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'retry_count': self.retry_count,
+            'max_retries': self.max_retries,
         }
         return json.dumps(data)  # converts python object to json string
     
-    """ deserializing from json string to python object """
     @staticmethod
     def from_json(json_str):
         data = json.loads(json_str)
         data['created_at'] = datetime.fromisoformat(data['created_at'])
+        # ensure retry fields are present
+        data.setdefault('retry_count', 0)
+        data.setdefault('max_retries', 3)
         return Task(**data)
     
     """ retrying if retry counts left """
     @property
     def can_retry(self):
         return self.retry_count < self.max_retries
+
+    def increment_retry(self):
+        self.retry_count = (self.retry_count or 0) + 1
+        return self

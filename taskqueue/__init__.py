@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from .task import Task, TaskStatus, Priority
 from .queue import Queue
 from .worker import Worker
@@ -11,6 +14,6 @@ __all__ = [
     "Priority",
     "Queue",
     "Worker",
-    "StorageBackend",
+    "storage_backend",
     "RedisBackend",
 ]

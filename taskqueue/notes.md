@@ -32,3 +32,9 @@
 4) Pop() iterates through priority levels in descending order to get highest priority task first
 5) get_task() retrieves the stored task meta data and deserializes to Task object
 6) get_processing_count() uses Redis set (SMEMBERS) to track currently processing tasks
+
+- JSON serialization gotcha: json.loads() deserializes arrays back as lists, not tuples. If your code expects a tuple (e.g. task.args), you need to explicitly cast it back with tuple() after deserializing. 
+- Task status must be reset on requeue: when a task fails and gets pushed back onto the queue, its status should be set back to ENQUEUED before saving. If skipped, the stored task metadata shows PROCESSING even though it's sitting in the queue waiting
+- Shared mutable state across threads: if multiple worker threads update the same counter or dict, you need a threading.Lock() to prevent race conditions. Wrap reads and writes with with lock: to ensure only one thread touches the value at a time. 
+- sys.path and script execution: when you run python examples/script.py, Python sets sys.path[0] to the examples/ directory, not the project root. This means import taskqueue fails even if the package exists one level up. Fix by inserting the project root into sys.path at the top of the script using os.path.abspath(file)
+- Scheduler as a separate class: isolating priority-order task selection into a Scheduler class means the Worker doesn't need to know anything about priority levels or queue structure. If you add a new priority level or change selection logic, you only touch scheduler, not worker or RedisBackend.

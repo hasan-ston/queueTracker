@@ -1,4 +1,3 @@
-# any storage backend must implement these methods
 
 from abc import ABC, abstractmethod
 from typing import Optional
@@ -6,133 +5,74 @@ from taskqueue.task import Task
 
 
 class storage_backend(ABC):
-    @abstractmethod # this method must be implemented by any subclass
-    def push(self, task):
+    @abstractmethod
+    def push(self, task: Task):
         """Push a task onto the queue.
 
         Args:
-            task: The task to be added to the queue.
+            task: The `Task` instance to be enqueued.
         """
         pass
 
     @abstractmethod
-    def pop(self, priority=None):
+    def pop(self, priority: Optional[int] = None) -> Optional[Task]:
         """Pop a task from the queue.
 
-        Returns:
-            The task that was removed from the queue.
+        If `priority` is provided, pop from that priority queue; otherwise
+        the implementation should return the highest-priority available task.
         """
         pass
 
     @abstractmethod
-    def peek(self, priority: Optional[int] = None):
-        """Peek at the next task in the queue without removing it.
-
-        Returns:
-            The next task in the queue.
-        """
-        pass
-
-    @abstractmethod
-    def get_task(self, task_id):
+    def get_task(self, task_id: str) -> Optional[Task]:
         """Retrieve a task by its ID.
 
-        Args:
-            task_id: The unique identifier of the task.
-
-        Returns:
-            The task with the specified ID.
+        Returns `None` if the task is not found.
         """
         pass
 
     @abstractmethod
-    def update_task(self, task):
-        """Update an existing task in the queue.
-
-        Args:
-            task: The task with updated information.
-        """
+    def update_task(self, task: Task):
+        """Persist updated task state (status, retry_count, etc.)."""
         pass
 
     @abstractmethod
-    def delete_task(self, task_id):
-        """Delete a task from the queue by its ID.
-
-        Args:
-            task_id: The unique identifier of the task to be deleted.
-        """
+    def mark_processing(self, task: Task):
+        """Mark a task as being processed and track it as in-flight."""
         pass
 
     @abstractmethod
-    def mark_processing(self, task_id):
-        """Mark a task as being processed.
-
-        Args:
-            task_id: The unique identifier of the task to be marked.
-        """
+    def mark_completed(self, task: Task):
+        """Mark a task as completed and clear any in-flight tracking."""
         pass
 
     @abstractmethod
-    def mark_completed(self, task_id):
-        """Mark a task as completed.
-
-        Args:
-            task_id: The unique identifier of the task to be marked.
-        """
+    def mark_failed(self, task: Task):
+        """Mark a task as failed and clear any in-flight tracking."""
         pass
 
     @abstractmethod
-    def mark_failed(self, task_id):
-        """Mark a task as failed.
-
-        Args:
-            task_id: The unique identifier of the task to be marked.
-        """
+    def requeue(self, task: Task):
+        """Requeue a task for later processing (usually after retry increment)."""
         pass
 
     @abstractmethod
-    def requeue(self, task):
-        """Requeue a task for processing.
-
-        Args:
-            task: The task to be requeued.
-        """
+    def get_queue_length(self, priority: Optional[int] = None) -> int:
+        """Return count of tasks in queue (or for a specific priority)."""
         pass
 
     @abstractmethod
-    def get_queue_length(self, priority=None):
-        """Get the number of tasks in the queue.
-
-        Returns:
-            The number of tasks in the queue.
-        """
+    def get_processing_count(self) -> int:
+        """Return count of tasks currently being processed."""
         pass
 
     @abstractmethod
-    def get_processing_count(self):
-        """Get the number of tasks currently being processed.
-
-        Returns:
-            The number of tasks being processed.
-        """
-        pass
-
-    @abstractmethod
-    def get_stats(self):
-        """Get statistics about the task queue.
-
-        Returns:
-            A dictionary containing various statistics about the queue.
-        """
-        pass
-
-    @abstractmethod
-    def clear(self):
-        """Clear all tasks from the queue."""
+    def get_stats(self) -> dict:
+        """Return a dictionary of queue/processing statistics."""
         pass
 
     @abstractmethod
     def close(self):
-        """Close the connecting to backend storage."""
+        """Close connections to the backend and cleanup resources."""
         pass
 

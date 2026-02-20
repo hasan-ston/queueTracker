@@ -5,7 +5,8 @@ class Scheduler:
         self.backend = backend
 
     def get_next_task(self):
-        for priority in [Priority.HIGH, Priority.MEDIUM, Priority.LOW]:
+        # Priority constants on Task use `High`, `Medium`, `Low` (capitalized)
+        for priority in [Priority.High, Priority.Medium, Priority.Low]:
             task = self.backend.pop(priority)
             if task:
                 return task

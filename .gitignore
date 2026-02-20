@@ -23,3 +23,22 @@ venv/
 ENV/
 env/
 .env
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Testing, coverage, and caches
+.pytest_cache/
+.coverage
+.mypy_cache/
+
+# Logs and temporary files
+*.log
+*~
+.DS_Store
+
+# Docker and runtime artifacts
+docker-compose.override.yml
+dump.rdb
+redis_data/
